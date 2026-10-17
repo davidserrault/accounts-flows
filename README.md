@@ -1,12 +1,11 @@
 # Accounts Flow
 
-A dependency-free static application showing the attached PersonAI account history as monochrome particle flows. The English interface uses the requested name, Camille; source metadata retains Sarah as the recorded synthetic persona.
+A dependency-free static application showing account histories created with the web application "Banking Persona" as particle flows.
 
 ## Data
 
-Money is stored in integer euro cents. `model.js` validates all 1,139 running balances and pairs all 92 internal transfers. It groups transactions by their exact recorded date into 731 consecutive days (9 October 2018 to 8 October 2020), including 186 days without operations and 29 February 2020. Income and spending exclude internal transfers. Daily averages include all observed days.
+Data are created with the application https://github.com/davidserrault/banking-personai/  
 
-The history reconciles to €5,800.00 opening cash + €91,946.28 external income − €77,506.76 external spending = €20,239.52 closing cash.
 
 ## Importing a history
 

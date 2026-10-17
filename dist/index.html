@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+  <meta name="description" content="Follow your money, day by day. An interactive particle portrait of income, account balances, transfers and spending.">
+  <title>Accounts Flow</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 10 7-10 7Z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="3"/></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><path d="M19 8a8 8 0 0 0-13-2L3 9m0-6v6h6m-4 7a8 8 0 0 0 13 2l3-3m0 6v-6h-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  </svg>
+  <main class="app">
+    <header class="masthead" id="masthead">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><h1>Accounts Flow<span class="brand-period">.</span></h1></div>
+      <div class="header-actions current-day">
+        <div class="period-control"><label for="day-select" class="sr-only">Choose displayed day</label><input type="date" id="day-select"><span id="observed-period"></span></div>
+      </div>
+    </header>
+    <input id="history-file" type="file" accept=".json,application/json" aria-label="Choose account-history JSON file" hidden>
+    <div class="dashboard">
+    <aside class="overview" id="overview" aria-label="Account history overview">
+      <span class="person summary-person"><span class="person-dot"></span><span id="person-name">Camille</span></span>
+      <div class="summary-heading"><h2 class="summary-title">Summary</h2><button id="summary-toggle" class="summary-toggle" aria-expanded="true" aria-controls="summary-content">Hide <span aria-hidden="true">−</span></button></div>
+      <div id="summary-content">
+      <dl class="metrics">
+        <div><dt>Accounts</dt><dd id="stat-accounts"></dd></div>
+        <div><dt>Transactions</dt><dd id="stat-transactions"></dd></div>
+        <div><dt>History</dt><dd id="stat-history"></dd></div>
+        <div><dt>Avg. monthly income</dt><dd id="stat-income"></dd></div>
+        <div><dt>Avg. monthly spending</dt><dd id="stat-expense"></dd></div>
+        <div class="transaction-average"><dt>Avg. credit / payment</dt><dd id="stat-averages"></dd></div>
+      </dl>
+      <div class="summary-import">
+        <button id="import-file" class="import-button">Import JSON <span aria-hidden="true">↥</span></button>
+        <div class="import-info" id="import-feedback" hidden><div class="import-feedback"><p id="import-status" role="status" aria-live="polite" hidden></p><p id="import-error" role="alert" hidden></p><button id="use-demo" class="demo-button" hidden>Use demo</button></div></div>
+      </div>
+      </div>
+    </aside>
+    <div class="flow-workspace">
+    <section class="flow-section" aria-label="Interactive daily money flow">
+      <div class="diagram-viewport" id="diagram-viewport">
+      <div class="flow-headings">
+        <div><div class="column-title"><span>01</span><h2>Income</h2><span class="direction">→</span></div><p><strong id="day-income"></strong><span>this month</span></p></div>
+        <div><div class="column-title"><span>02</span><h2>Accounts</h2><span class="direction">→</span></div><p><strong id="live-total"></strong><span>rolling balance</span></p></div>
+        <div><div class="column-title"><span>03</span><h2>Spending</h2></div><p><strong id="day-expense"></strong><span>this month</span></p></div>
+      </div>
+        <div class="diagram" id="diagram" tabindex="0" role="region" aria-label="Money flow diagram; scroll to explore all accounts and sources">
+          <div id="diagram-space" class="diagram-space">
+          <canvas id="flow-canvas" role="img" tabindex="0" aria-label="Animated money flow. Income sources are on the left, bank accounts in the middle, and spending categories on the right. Use the timeline to choose a day and select a circle to inspect a flow."></canvas>
+          </div>
+          <div class="tooltip" id="tooltip" hidden></div>
+          <div class="diagram-corner"><span class="particle-key" aria-hidden="true"></span>1 full particle = €10</div>
+        </div>
+      </div>
+    </section>
+    <section class="transport" id="transport" aria-label="Animation playback controls">
+      <button id="play" class="play-button" aria-label="Play animation" title="Play animation"><svg id="play-icon" aria-hidden="true"><use href="#i-play"/></svg><span id="play-text" class="sr-only">Play</span></button>
+      <div class="timeline-wrap"><div id="timeline-chart" class="timeline-chart" aria-hidden="true"></div><label for="timeline" class="sr-only">Money flow timeline; combined account balances in the background, red below zero. Use arrow keys to scrub or Page Up and Page Down to change days</label><input id="timeline" type="range" min="0" max="731" step="0.001" value="0"><div id="timeline-labels" class="timeline-labels" aria-hidden="true"></div></div>
+      <div class="playback-settings"><select id="speed" aria-label="Animation speed" title="Animation speed"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option><option value="16">16×</option></select><button id="loop" class="loop-button" aria-label="Loop the full history" aria-pressed="false" title="Loop the full history"><svg aria-hidden="true"><use href="#i-loop"/></svg></button></div>
+    </section>
+    </div>
+    </div>
+  </main>
+  <button id="panel-scrim" class="panel-scrim" aria-label="Close flow details" hidden></button>
+  <aside id="detail-panel" class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" hidden>
+    <div class="panel-header"><span class="eyebrow" id="detail-kind"></span><button id="close-panel" class="icon-button" aria-label="Close details"><svg><use href="#i-close"/></svg></button></div>
+    <h2 id="detail-title"></h2><p class="panel-period" id="detail-period"></p><div id="detail-metrics"></div><div id="detail-transactions"></div><button id="more-transactions" class="more-button" hidden>Show more transactions</button>
+  </aside>
+  <noscript><p class="no-script">Accounts Flow needs JavaScript to animate the account history. Please enable JavaScript and reload.</p></noscript>
+</body>
+</html>
